@@ -52,7 +52,10 @@ public:
         ofs << n.apellido << '*' << n.nombre << '*';
         return ofs;
     }
-    Nombre &operator = (const Nombre &n) =  default;
+    Nombre &operator = (const Nombre &n){
+        this->nombre = n.nombre;
+        this->apellido = n.apellido;
+    }
 
    bool operator == (const Nombre &n){
         return (this->apellido == n.apellido);

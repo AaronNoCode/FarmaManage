@@ -6,13 +6,12 @@
 using namespace std;
 
 int main(){
-    /*try{
-         ifstream fileIn("backups/archivo_consultas.file", ios::in);
+    try{
+        ifstream fileIn("backups/archivo_consultas.file", ios::in);
         ofstream fileOut("backups/medicos-file.txt", ios::out | ios::trunc);
         if(fileOut.fail() || fileIn.fail()){
             throw runtime_error("Failed");
         }
-        
         Consulta c;
         Medico m;
         string line;
@@ -21,19 +20,20 @@ int main(){
             iss >> c;
             m = c.getMedico();
             fileOut << "1*"<< m <<'#';
+/*
             cout<<c.getPaciente().getNombre().getNombre()<< '\n';
+*/
         }
         cout<<"open";
         fileIn.close();
+        string linear = "Not my business";
+        cout<<linear.substr(4);
+        MedicosFile MF;
+        cout<< MF.reindex();
     }catch (const runtime_error &e){
         cout << "No se pudo abrir" << e.what() << endl;
-    } */
-        MedicosFile MF;
-        cout<< MF.reindex(); 
-
-
-
-
+    }
+        
     return 0;
 }
 

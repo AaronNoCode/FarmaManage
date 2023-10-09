@@ -20,9 +20,9 @@ private:
     list<IndexTuple<string>> listIdxCode;
 public:
     MedicosFile(){
-        dataFileDir = "backups/medicos-file.txt";  //TODO revisar direccion relativa a .exe cuando se entregue o se pruebe el proyecto
-        idxCodeDir = "backups/medicos-file.txt";  //TODO revisar direccion relativa a .exe cuando se entregue o se pruebe el proyecto
-        idxNameDir = "backups/medicos-file.txt";  //TODO revisar direccion relativa a .exe cuando se entregue o se pruebe el proyecto
+        dataFileDir = "backups/medicos-file.txt";
+        idxCodeDir = "backups/medicosCode-file.txt";
+        idxNameDir = "backups/medicosName-file.txt";
     }
     ~MedicosFile(){
         if(dataFileStream.is_open())
@@ -40,12 +40,12 @@ public:
     int findDataByName(Nombre &name) const;
     int findDataByCode(string &code) const;
     Medico retrieve(int &idx);
-    int reindex(){
+    void reindex(){
         list<IndexTuple<>> myListTupleName;
         list<IndexTuple<>> myListTupleCode;
         IndexTuple<> tupleName;
         IndexTuple<> tupleCode;
-        string line;
+        string dirtyLine, cleanLine, aux;
         long long index;
         Medico m;
         dataFileStream.open("backups/medicos-file.txt",ios::in);
@@ -55,37 +55,37 @@ public:
         while(!dataFileStream.eof()){
             // Sacar el índice del puntero de lectura para su posición
             index = dataFileStream.tellg();
-            getline(dataFileStream, line, '#');
-            if(line.empty())
+            getline(dataFileStream, dirtyLine, '#');
+            if(dirtyLine.empty())
                 continue;
-            if(line[0] == '0')
+            if(dirtyLine[0] == '0')
                 continue;
-            stringstream iss(line);
+            cleanLine = dirtyLine.substr(2);
+            stringstream iss(cleanLine);
             iss >> m;
             iss.clear();
+
             // Se llena la tupla de código
             tupleCode.setIndex(index);
-            line = m.getCodigoEmpleado();
-            for(auto &i : line)
-                i = (char)toupper(i);
-            tupleCode.setData(line);
+            aux = m.getCodigoEmpleado();
+            tupleCode.setData(aux);
+            myListTupleCode.push_back(tupleCode);
 
             // Se llena la tupla de nombre
             tupleName.setIndex(index);
-            line = m.getNombre();
-            for(auto &i : line)
+            aux = m.getNombre();
+            for(auto &i : cleanLine)
                 i = (char)toupper(i);
-            tupleName.setData(line);
-
-            // Push cada tupla poblada a la lista correspondiente
-            myListTupleCode.push_back(tupleCode);
+            tupleName.setData(aux);
             myListTupleName.push_back(tupleName);
         }
 
         // Ordenar la lista por nombre
         myListTupleName.sort();
+        myListTupleName.unique();
         // Ordenar la lista por código
         myListTupleCode.sort();
+        myListTupleCode.unique();
 
         // Grabanado a archivo de índice CÓDIGO
         idxCodeStream.open(idxCodeDir,ios::out | ios::trunc);
@@ -98,9 +98,6 @@ public:
         if (!idxNameStream.is_open())
             throw ios::failure("Archivo no encontrado 'medicos-name'");
         listTofile(myListTupleName,idxNameStream);
-
-        //!/////////////////////////TODO////////////////////////////
-        return 1;
     }
     void delData();
     list<Medico> fileToList(){ // + Cuando agregan
