@@ -29,7 +29,7 @@ int main(){
         cout << "No se pudo abrir" << e.what() << endl;
     } */
         MedicosFile MF;
-        MF.reindex(); 
+        cout<< MF.reindex(); 
 
 
     return 0;

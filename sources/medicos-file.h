@@ -40,7 +40,7 @@ public:
     int findDataByName(Nombre &name) const;
     int findDataByCode(string &code) const;
     Medico retrieve(int &idx);
-    void reindex(){
+    int reindex(){
         list<IndexTuple<>> myListTupleName;
         list<IndexTuple<>> myListTupleCode;
         IndexTuple<> tupleName;
@@ -100,6 +100,7 @@ public:
         listTofile(myListTupleName,idxNameStream);
 
         //!/////////////////////////TODO////////////////////////////
+        return 1;
     }
     void delData();
     list<Medico> fileToList(){ // + Cuando agregan
