@@ -1,0 +1,3 @@
+C:/Users/caper/Documents/CUCEI/3ro/Sem Estructuras II/FarmaManage/cmake-build-debug/CMakeFiles/FarmaManage.dir
+C:/Users/caper/Documents/CUCEI/3ro/Sem Estructuras II/FarmaManage/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/caper/Documents/CUCEI/3ro/Sem Estructuras II/FarmaManage/cmake-build-debug/CMakeFiles/rebuild_cache.dir

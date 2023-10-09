@@ -1,0 +1,4 @@
+ToolSet: w64 9.0 (local)@C:\MingDef\MinGW
+Options: 
+
+Options:-DCMAKE_MAKE_PROGRAM=C:/Users/caper/AppData/Local/Programs/CLion/bin/ninja/win/x64/ninja.exe
