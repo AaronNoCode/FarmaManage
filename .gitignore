@@ -1,6 +1,7 @@
 /testing.cpp
 /testing.exe
 /CMakeLists.txt
-*.[exe]
-*.[txt]
+
+*.exe
+*.txt
 cmake-build-debug
