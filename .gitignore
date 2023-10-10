@@ -1,7 +1,7 @@
 /testing.cpp
 /testing.exe
 /CMakeLists.txt
-
+/.idea
+cmake-build-debug
 *.exe
 *.txt
-cmake-build-debug
