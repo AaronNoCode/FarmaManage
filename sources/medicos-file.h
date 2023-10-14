@@ -23,6 +23,7 @@ public:
         dataFileDir = "backups/medicos-file.txt";
         idxCodeDir = "backups/medicosCode-file.txt";
         idxNameDir = "backups/medicosName-file.txt";
+        // + TODO fileToList y poblar las dos listas en caso de que se quiera buscar de primeras
     }
     ~MedicosFile(){
         if(dataFileStream.is_open())
@@ -37,7 +38,9 @@ public:
         dataFileStream << m;
         reindex();
     }
-    int findDataByName(Nombre &name) const;
+    int findDataByName(Nombre &name) const{
+
+    }
     int findDataByCode(string &code) const;
     Medico retrieve(int &idx);
     void reindex(){
@@ -58,20 +61,25 @@ public:
             getline(dataFileStream, dirtyLine, '#');
             if(dirtyLine.empty())
                 continue;
+            // Si el booleano que indica si el índice está activo es cero, se ignora
             if(dirtyLine[0] == '0')
                 continue;
+            // ? Se limpia la línea quitándole el booleano y el separador de campo
             cleanLine = dirtyLine.substr(2);
+            // Creación de un string stream con la línea limpia
             stringstream iss(cleanLine);
+            // El stream se mete a médico
             iss >> m;
+            // Limpieza del stream
             iss.clear();
 
-            // Se llena la tupla de código
+            // Se llena la tupla de código con el médico obtenido del string stream y se agrega a la lista correspondiente
             tupleCode.setIndex(index);
             aux = m.getCodigoEmpleado();
             tupleCode.setData(aux);
             myListTupleCode.push_back(tupleCode);
 
-            // Se llena la tupla de nombre
+            // Se llena la tupla de nombre con el médico obtenido del string stream y se agrega a la lista correspondiente
             tupleName.setIndex(index);
             aux = m.getNombre();
             for(auto &i : cleanLine)
@@ -79,11 +87,10 @@ public:
             tupleName.setData(aux);
             myListTupleName.push_back(tupleName);
         }
-
-        // Ordenar la lista por nombre
+        // Ordenar la lista por nombre y quitar duplicados
         myListTupleName.sort();
         myListTupleName.unique();
-        // Ordenar la lista por código
+        // Ordenar la lista por código y quitar duplicados
         myListTupleCode.sort();
         myListTupleCode.unique();
 
@@ -98,17 +105,21 @@ public:
         if (!idxNameStream.is_open())
             throw ios::failure("Archivo no encontrado 'medicos-name'");
         listTofile(myListTupleName,idxNameStream);
+
+
     }
     void delData();
-    list<Medico> fileToList(){ // + Cuando agregan
-        list <Medico> myList;
+
+    // + Lista exclusiva para médico
+    list<Medico> fileToList(const string &targetFile){
+        list<Medico> myList;
         string line;
         Medico m;
         stringstream iss(line);
-        dataFileStream.open("backups/medicos-file.txt");
-        if (!dataFileStream.is_open())
+        ifstream ifs(targetFile);
+        if (!ifs.is_open())
             throw ios::failure("Archivo no encontrado");
-        while(getline(dataFileStream, line, '#')){
+        while(getline(ifs, line, '#')){
             if(line[0] == 0)
                 continue;
             line.erase(0,2);
@@ -123,6 +134,7 @@ public:
             myFStream << "1*" << *iterator << '#';
         return myFStream;
     }
+
     void clear();
     void compress();
 };
