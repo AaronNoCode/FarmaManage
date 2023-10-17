@@ -6,7 +6,7 @@
 using namespace std;
 
 int main(){
-    try{
+    /*try{
         ifstream fileIn("backups/archivo_consultas.file", ios::in);
         ofstream fileOut("backups/medicos-file.txt", ios::out | ios::trunc);
         if(fileOut.fail() || fileIn.fail()){
@@ -20,20 +20,18 @@ int main(){
             iss >> c;
             m = c.getMedico();
             fileOut << "1*"<< m <<'#';
-/*
             cout<<c.getPaciente().getNombre().getNombre()<< '\n';
-*/
         }
         cout<<"open";
         fileIn.close();
-        string linear = "Not my business";
-        cout<<linear.substr(4);
-        MedicosFile MF;
-        cout<< MF.reindex();
+
     }catch (const runtime_error &e){
         cout << "No se pudo abrir" << e.what() << endl;
-    }
-        
+    }*/
+
+    MedicosFile MF;
+    string code = "01-4628771";
+    cout<< MF.findDataByCode(code);
     return 0;
 }
 

@@ -41,7 +41,7 @@ public:
     friend istream &operator >> (istream &ifs, IndexTuple &it){
         ifs >> it.index;
         ifs.ignore(1,'*');
-        getline(ifs,it.data,'\n');
+        ifs >>it.data;
         return ifs;
     }
     IndexTuple& operator = (const IndexTuple&) = default;
