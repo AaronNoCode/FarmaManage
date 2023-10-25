@@ -13,10 +13,10 @@ private:
     Hora horaSalida;
 public:
     Medico()= default;
-    Medico(string codigoEmpleado, Nombre nombre, string cedula, Hora horaEntrada, Hora horaSalida){
+    Medico(const string &codigoEmpleado, const Nombre& nombre, const string& cedula, Hora horaEntrada, Hora horaSalida){
         this->codigoEmpleado = codigoEmpleado;
         this->nombre = nombre;
-        this->cedula = stoi(cedula);
+        this->cedula = cedula;
         this->horaEntrada = horaEntrada;
         this->horaSalida = horaSalida;
     }
@@ -41,8 +41,8 @@ public:
     [[nodiscard]] string getCodigoEmpleado() const{
         return this->codigoEmpleado;
     }
-    [[nodiscard]] string getNombre() const{
-        return this->nombre.getApellidos() + ' ' + this->nombre.getNombre();
+    [[nodiscard]] Nombre getNombre() const{
+        return this->nombre;
     }
     [[nodiscard]] string getCedula() const{
         return this->cedula;
@@ -53,6 +53,7 @@ public:
     [[nodiscard]] Hora getHoraSalida() const{
         return this->horaSalida;
     }
+
     friend istream &operator >> (istream&ifs,Medico&m){
         string primerApellido, segundoApellido, primerNombre, segundoNombre,cedula;
         getline(ifs, m.codigoEmpleado,'*');
@@ -66,13 +67,30 @@ public:
         ofs << m.codigoEmpleado <<'*'<< m.nombre << m.cedula <<'*'<< m.horaEntrada << m.horaSalida;
         return ofs;
     }
-    Medico & operator = (const Medico &m) = default;
-
-    bool operator == (const Medico &m) const{
-        return codigoEmpleado == m.codigoEmpleado;
+    Medico &operator = (Medico m) {
+        if(&m == this)
+            return *this;
+        this->codigoEmpleado = m.codigoEmpleado;
+        this->nombre = m.nombre;
+        this->cedula = m.cedula;
+        this->horaEntrada = m.horaEntrada;
+        this->horaSalida = m.horaSalida;
+        return *this;
+    }
+    bool operator != (Medico &m) {
+        return this->nombre != m.nombre;
+    }
+    bool operator == (Medico &m) {
+        return this->nombre == m.nombre;
+    }
+    bool operator >= (Medico &m) {
+        return this->nombre >= m.nombre;
+    }
+    bool operator > (Medico &m) {
+        return this->nombre > m.nombre;
     }
     bool operator < (Medico &m) {
-        return (this->nombre < m.nombre);
+        return this->nombre < m.nombre;
     }
     bool operator <= (Medico &m) {
         return this->nombre <= m.nombre;

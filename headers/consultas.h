@@ -89,8 +89,23 @@ public:
         ifs.ignore();
         return ifs;
     }
-    Consulta &operator = (const Consulta &c) = default;
+    Consulta &operator = (const Consulta &c){
+        if(&c == this)
+            return *this;
+        this->fecha = c.fecha;
+        this->hora = c.hora;
+        this->diagnostico = c.diagnostico;
+        this->medico = c.medico;
+        this->paciente = c.paciente;
+        this->medicamento1 = c.medicamento1;
+        this->medicamento2 = c.medicamento2;
+        this->medicamento3 = c.medicamento3;
+        return *this;
+    }
 
+    bool operator != (Consulta &c){
+        return (this->fecha != c.fecha);
+    }
     bool operator == (const Consulta &c){
         return (this->fecha == c.fecha) && (this->diagnostico == c.diagnostico);
     }

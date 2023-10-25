@@ -13,17 +13,19 @@ private:
 public:
     Nombre()= default;
     Nombre(const string& nombres, const string& apellidos){
-        istringstream iss(nombres);
+        istringstream iss;
+        getline(istringstream(nombres), nombre);
         iss >> nombre;
-        istringstream iss2(apellidos);
+        istringstream iss2;
+        getline(istringstream(apellidos), apellido);
         iss2 >> apellido;
     }
 
     [[nodiscard]] string getNombre() const{
-        return (this->nombre);
+        return this->nombre;
     }
     [[nodiscard]] string getApellidos() const{
-        return (this->apellido);
+        return this->apellido;
     }
 
     void setApellidos(const string &apellidos){
@@ -37,9 +39,8 @@ public:
 
     string toString(){
         string str = nombre + " " + apellido;
-        for (char& i : str){
+        for (char& i : str)
             i = toupper(i);
-        }
         return str;
     }
 
@@ -53,12 +54,24 @@ public:
         return ofs;
     }
     Nombre &operator = (const Nombre &n){
+        if(&n == this)
+            return *this;
         this->nombre = n.nombre;
         this->apellido = n.apellido;
+        return *this;
     }
 
-   bool operator == (const Nombre &n){
-        return (this->apellido == n.apellido);
+    bool operator != (Nombre &n){
+        return this->toString() != n.toString();
+    }
+   bool operator == (Nombre &n){
+        return this->toString() == n.toString();
+    }
+    bool operator >= (Nombre &n){
+        return this->toString() >= n.toString();
+    }
+    bool operator > (Nombre &n){
+        return this->toString() > n.toString();
     }
     bool operator <= (Nombre &n){
         return this->toString() <= n.toString();
@@ -66,6 +79,7 @@ public:
     bool operator < (Nombre &n){
         return this->toString() < n.toString();
     }
+
 
     friend class Paciente;
     friend class Medico;

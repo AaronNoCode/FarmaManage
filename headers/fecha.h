@@ -53,20 +53,66 @@ public:
         return ifs;
     }
     Fecha& operator = (const Fecha &f)= default; //! Checar si sirve bien este operador al declararlo default
+
+    bool operator != (const Fecha &f) const{
+        return ((this->dia != f.dia) || (this->mes != f.mes) || (this->anio != f.anio));
+    }
     bool operator == (const Fecha &f) const{
         return ((this->dia == f.dia) && (this->mes == f.mes) && (this->anio == f.anio));
     }
-
     bool operator < (const Fecha &f) const{
-        return ((this->anio < f.anio) && (this->mes < f.mes) && (this->dia < f.dia));
+        if (this->anio < f.anio)
+            return true;
+        else if (this->anio < f.anio){
+            if (this->mes < f.mes)
+                return true;
+            else if (this->mes < f.mes){
+                if (this->dia < f.dia)
+                    return true;
+            }
+        }
+        return false;
     }
-
     bool operator <= (const Fecha &f) const{
-        return ((this->anio <= f.anio) && (this->mes <= f.mes) && (this->dia <= f.dia));
+        if (this->anio <= f.anio)
+            return true;
+        else if (this->anio <= f.anio){
+            if (this->mes <= f.mes)
+                return true;
+            else if (this->mes <= f.mes){
+                if (this->dia <= f.dia)
+                    return true;
+            }
+        }
+        return false;
     }
 
     bool operator >= (const Fecha &f) const{
-        return ((this->anio >= f.anio) && (this->mes >= f.mes) && (this->dia >= f.dia));
+        if (this->anio >= f.anio)
+            return true;
+        else if (this->anio >= f.anio){
+            if (this->mes >= f.mes)
+                return true;
+            else if (this->mes >= f.mes){
+                if (this->dia >= f.dia)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    bool operator > (const Fecha &f) const {
+        if (this->anio > f.anio)
+            return true;
+        else if (this->anio > f.anio){
+            if (this->mes > f.mes)
+                return true;
+            else if (this->mes > f.mes){
+                if (this->dia > f.dia)
+                    return true;
+            }
+        }
+        return false;
     }
 };
 #endif //SEM_ESTRUCTURAS_II_FECHA_H

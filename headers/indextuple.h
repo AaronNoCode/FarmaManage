@@ -5,7 +5,7 @@
 #include <list>
 using namespace std;
 
-template <class T = string >
+template <class T = string>
 class IndexTuple{
 private:
     long long index;
@@ -46,23 +46,23 @@ public:
     }
     IndexTuple& operator = (const IndexTuple&) = default;
 
-    bool operator == (const IndexTuple& it) const{
+    bool operator != (IndexTuple& it) {
+        return this->data != it.data;
+    }
+    bool operator == (IndexTuple& it) {
         return this->data == it.data;
     }
-    bool operator <= (const IndexTuple& it) const{
+    bool operator <= (IndexTuple& it) {
         return this->data <= it.data;
     }
-    bool operator >= (const IndexTuple& it) const{
+    bool operator >= (IndexTuple& it) {
         return this->data >= it.data;
     }
-    bool operator < (const IndexTuple& it) const{
+    bool operator < (IndexTuple& it) {
         return this->data < it.data;
     }
-    bool operator > (const IndexTuple& it) const{
+    bool operator > (IndexTuple& it) {
         return this->data > it.data;
-    }
-    bool operator != (const IndexTuple& it) const{
-        return this->data != it.data;
     }
 
 
