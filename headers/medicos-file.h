@@ -56,14 +56,16 @@ public:
             ofs << "1*" << iterator << '#';
         }
     }
+
     void addData(Medico &m){
         IndexTuple<Nombre> tupleName;
         IndexTuple<string> tupleCode;
-        long long index;
+        long long index, buscado;
         fstream ofs(dataFileDir, ios::out | ios::in);
         // Si encuentra el nombre en la lista, checa si el registro está dado de alta (checa en archivo el estado (0 o 1)) y si está inactivo, cambia el 0 por un 1
-        if(findDataByName(m.getNombre()) != -1){
-            ofs.seekp(findDataByName(m.getNombre()));
+        buscado = findDataByName(m.getNombre());
+        if(buscado != -1){
+            ofs.seekp(buscado);
             // TODO pedir confirmación para reactivarlo
             ofs.put('1');
             return;
@@ -71,7 +73,6 @@ public:
         ofs.seekp(0,ios::end);
         index = ofs.tellp();
         ofs << "1*" << m << '#';
-
         // Se llena la tupla de código con el médico obtenido del string stream y se agrega a la lista correspondiente
         tupleCode.setIndex(index);
         tupleCode.setData(m.getCodigoEmpleado());
@@ -90,14 +91,14 @@ public:
         if (!idxCodeStream.is_open())
             throw ios::failure("Archivo no encontrado 'medicos-code'");
         listTofile(listIdxCode,idxCodeStream);
-        idxCodeStream.flush();
+        idxCodeStream.close();
 
         // Grabando a archivo de índice NOMBRE
         idxNameStream.open(idxNameDir,ios::out | ios::trunc);
         if (!idxNameStream.is_open())
             throw ios::failure("Archivo no encontrado 'medicos-name'");
         listTofile(listIdxName,idxNameStream);
-        idxNameStream.flush();
+        idxNameStream.close();
     }
     // + Nota, siempre debe estar poblada la lista para poder buscar
     int findDataByName(Nombre name) const{ // * DONE
@@ -134,6 +135,7 @@ public:
                 cleanLine = dirtyLine.substr(2);
                 stringstream iss(cleanLine);
                 iss>>med;
+                dataFileStream.close();
                 return med;
             }
         }
@@ -180,6 +182,7 @@ public:
             tupleName.setData(m.getNombre());
             myListTupleName.push_back(tupleName);
         }
+        dataFileStream.close();
         // Ordenar la lista por nombre y quitar duplicados
         myListTupleName.sort();
         myListTupleName.unique();
@@ -193,12 +196,14 @@ public:
         if (!idxCodeStream.is_open())
             throw ios::failure("Archivo no encontrado 'medicos-code'");
         listTofile(myListTupleCode,idxCodeStream);
+        idxCodeStream.close();
 
         // Grabando a archivo de índice NOMBRE
         idxNameStream.open(idxNameDir,ios::out | ios::trunc);
         if (!idxNameStream.is_open())
             throw ios::failure("Archivo no encontrado 'medicos-name'");
         listTofile(myListTupleName,idxNameStream);
+        idxNameStream.close();
 
         fileToList(idxNameDir,listIdxName);
         fileToList(idxCodeDir,listIdxCode);
@@ -209,6 +214,7 @@ public:
                 dataFileStream.seekp(iterator.getIndex());
                 dataFileStream.put('0');
                 populateListAndFiles();
+                dataFileStream.close();
                 return;
                 // TODO checar si sirve así
             }
@@ -221,6 +227,7 @@ public:
                 dataFileStream.seekp(iterator.getIndex());
                 dataFileStream.put('0');
                 populateListAndFiles();
+                dataFileStream.close();
                 return;
                 // TODO checar si sirve así
             }
@@ -232,6 +239,7 @@ public:
                 dataFileStream.seekp(iterator.getIndex());
                 dataFileStream.put('0');
                 populateListAndFiles();
+                dataFileStream.close();
                 return;
                 // TODO checar si sirve así
             }
@@ -263,7 +271,6 @@ public:
         for(auto &iterator : myList)
             myFStream << "1*" << iterator << '#';
         // Se asegura de que se estriba en el disco
-        myFStream.flush();
     }
     void clear(){
         dataFileStream.open(dataFileDir,ios::out | ios::trunc);
@@ -273,5 +280,6 @@ public:
         list<Medico> myList;
         fileToList(dataFileDir,myList);
         listTofile(myList,dataFileStream);
+        dataFileStream.close();
     }
 };
