@@ -19,14 +19,13 @@ private:
     list<IndexTuple<Nombre>> listIdxName;
     list<IndexTuple<string>> listIdxCode;
 public:
+
     MedicosFile(){
         dataFileDir = "backups/medicos-file.txt";
         idxCodeDir = "backups/medicosCode-file.txt";
         idxNameDir = "backups/medicosName-file.txt";
-        reindex();
-        for(auto const &iterator :listIdxCode){
-            cout<<iterator.getIndex()<<'\n';
-        }
+        importFromBackup("backups/archivo_consultas.file");
+        populateListAndFiles();
         // + TODO fileToList y poblar las dos listas en caso de que se quiera buscar de primeras
     }
     ~MedicosFile(){
@@ -37,14 +36,72 @@ public:
         if(idxNameStream.is_open())
             idxNameStream.close();
     }
+    void importFromBackup(const string& targetFile){
+        ifstream ifs(targetFile,ios::in);
+        ofstream ofs(dataFileDir,ios::out | ios::trunc);
+        if (!ifs.is_open())
+            throw ios::failure("Respaldo no encontrado");
+        list<Medico> listMedic;
+        Consulta c;
+        string aux;
+        while(!ifs.eof()){
+            getline(ifs,aux,'#');
+            stringstream iss(aux);
+            iss >> c;
+            listMedic.push_back(c.getMedico());
+        }
+        listMedic.sort();
+        listMedic.unique();
+        for (auto &iterator : listMedic){
+            ofs << "1*" << iterator << '#';
+        }
+    }
     void addData(Medico &m){
-        dataFileStream.open("backups/medicos-file.txt", ios::app);
-        dataFileStream << m;
-        reindex();
+        IndexTuple<Nombre> tupleName;
+        IndexTuple<string> tupleCode;
+        long long index;
+        fstream ofs(dataFileDir, ios::out | ios::in);
+        // Si encuentra el nombre en la lista, checa si el registro está dado de alta (checa en archivo el estado (0 o 1)) y si está inactivo, cambia el 0 por un 1
+        if(findDataByName(m.getNombre()) != -1){
+            ofs.seekp(findDataByName(m.getNombre()));
+            // TODO pedir confirmación para reactivarlo
+            ofs.put('1');
+            return;
+        }
+        ofs.seekp(0,ios::end);
+        index = ofs.tellp();
+        ofs << "1*" << m << '#';
+
+        // Se llena la tupla de código con el médico obtenido del string stream y se agrega a la lista correspondiente
+        tupleCode.setIndex(index);
+        tupleCode.setData(m.getCodigoEmpleado());
+        listIdxCode.push_front(tupleCode);
+
+        // Se llena la tupla de nombre con el médico obtenido del string stream y se agrega a la lista correspondiente
+        tupleName.setIndex(index);
+        tupleName.setData(m.getNombre());
+        listIdxName.push_front(tupleName);
+
+        listIdxCode.sort();
+        listIdxName.sort();
+
+        // Grabanado a archivo de índice CÓDIGO
+        idxCodeStream.open(idxCodeDir,ios::out | ios::trunc);
+        if (!idxCodeStream.is_open())
+            throw ios::failure("Archivo no encontrado 'medicos-code'");
+        listTofile(listIdxCode,idxCodeStream);
+        idxCodeStream.flush();
+
+        // Grabando a archivo de índice NOMBRE
+        idxNameStream.open(idxNameDir,ios::out | ios::trunc);
+        if (!idxNameStream.is_open())
+            throw ios::failure("Archivo no encontrado 'medicos-name'");
+        listTofile(listIdxName,idxNameStream);
+        idxNameStream.flush();
     }
     // + Nota, siempre debe estar poblada la lista para poder buscar
-    int findDataByName(Nombre &name) const{
-        for(const auto & iterator : listIdxName){
+    int findDataByName(Nombre name) const{ // * DONE
+        for(auto const &iterator : listIdxName){
             if(iterator.getData() == name)
                 return iterator.getIndex();
         }
@@ -52,7 +109,7 @@ public:
             return -1;
     }
     // + Nota, siempre debe estar poblada la lista para poder buscar
-    int findDataByCode(string &code) {
+    int findDataByCode(string &code) const{ // * DONE
         for(const auto &iterator :listIdxCode){
             if(iterator.getData() == code)
                 return iterator.getIndex();
@@ -60,20 +117,22 @@ public:
         // Si el ciclo se termina y no encontró el objeto, retorna -1
             return -1;
     }
-    Medico retrieve(int &idx){
+    Medico retrieve(int &idx){ // * DONE
         for(auto const &iterator :listIdxCode){
             if(iterator.getIndex() == idx){
                 dataFileStream.open(dataFileDir,ios::in);
                 if(!dataFileStream.is_open())
                     throw ios::failure("Archivo no encontrado 'medicos-file'");
-                dataFileStream.seekg(idx);
-                string aux;
+                dataFileStream.clear();
+                dataFileStream.seekg(idx,ios::beg);
+                string dirtyLine, cleanLine;
                 Medico med;
-                getline(dataFileStream, aux, '*');
-                if(aux == "0")
+                getline(dataFileStream, dirtyLine,'#');
+                cout<<dirtyLine;
+                if(dirtyLine[0] == '0')
                     throw ios::failure("Indice eliminado");
-                getline(dataFileStream,aux,'#');
-                stringstream iss(aux);
+                cleanLine = dirtyLine.substr(2);
+                stringstream iss(cleanLine);
                 iss>>med;
                 return med;
             }
@@ -81,28 +140,28 @@ public:
         throw ios::failure("Indice no existe");
     }
     // + Siempre lee el archivo de médicos y actualiza las listas
-    void reindex(){
-        list<IndexTuple<>> myListTupleName;
-        list<IndexTuple<>> myListTupleCode;
-        IndexTuple<> tupleName;
-        IndexTuple<> tupleCode;
-        string dirtyLine, cleanLine, aux;
+    void populateListAndFiles(){
+        list<IndexTuple<Nombre>> myListTupleName;
+        list<IndexTuple<string>> myListTupleCode;
+        IndexTuple<Nombre> tupleName;
+        IndexTuple<string> tupleCode;
+        string dirtyLine, cleanLine;
         long long index;
         Medico m;
+        Nombre nombreAux;
         dataFileStream.open(dataFileDir,ios::in);
         if (!dataFileStream.is_open())
-            throw ios::failure("Archivo no encontrado 'medicos-file");
+            throw ios::failure("Archivo no encontrado 'medicos-file'");
         // Ciclo para leer todos los médicos del archivo de médicos
-        while(!dataFileStream.eof()){
+        while(getline(dataFileStream, dirtyLine, '#')){
             // Sacar el índice del puntero de lectura para su posición
             index = dataFileStream.tellg();
-            getline(dataFileStream, dirtyLine, '#');
             if(dirtyLine.empty())
                 continue;
             // Si el booleano que indica si el índice está activo es cero, se ignora
             if(dirtyLine[0] == '0')
                 continue;
-            // ? Se limpia la línea quitándole el booleano y el separador de campo
+            // Se limpia la línea quitándole el booleano y el separador de campo
             cleanLine = dirtyLine.substr(2);
             // Creación de un string stream con la línea limpia
             stringstream iss(cleanLine);
@@ -113,21 +172,18 @@ public:
 
             // Se llena la tupla de código con el médico obtenido del string stream y se agrega a la lista correspondiente
             tupleCode.setIndex(index);
-            aux = m.getCodigoEmpleado();
-            tupleCode.setData(aux);
-            listIdxCode.push_back(tupleCode);
+            tupleCode.setData(m.getCodigoEmpleado());
+            myListTupleCode.push_back(tupleCode);
 
             // Se llena la tupla de nombre con el médico obtenido del string stream y se agrega a la lista correspondiente
             tupleName.setIndex(index);
-            aux = m.getNombre();
-            for(auto &i : cleanLine)
-                i = (char)toupper(i);
-            tupleName.setData(aux);
+            tupleName.setData(m.getNombre());
             myListTupleName.push_back(tupleName);
         }
         // Ordenar la lista por nombre y quitar duplicados
         myListTupleName.sort();
         myListTupleName.unique();
+
         // Ordenar la lista por código y quitar duplicados
         myListTupleCode.sort();
         myListTupleCode.unique();
@@ -152,19 +208,19 @@ public:
             if(iterator.getIndex() == idx){
                 dataFileStream.seekp(iterator.getIndex());
                 dataFileStream.put('0');
-                reindex();
+                populateListAndFiles();
                 return;
                 // TODO checar si sirve así
             }
         }
         throw ios::failure("Indice inexistente");
     }
-    void delData(const Nombre& nombre){
+    void delData(Nombre& nombre){
         for(auto const &iterator :listIdxName){
             if(iterator.getData() == nombre){
                 dataFileStream.seekp(iterator.getIndex());
                 dataFileStream.put('0');
-                reindex();
+                populateListAndFiles();
                 return;
                 // TODO checar si sirve así
             }
@@ -175,7 +231,7 @@ public:
             if (iterator.getData() == codigo){
                 dataFileStream.seekp(iterator.getIndex());
                 dataFileStream.put('0');
-                reindex();
+                populateListAndFiles();
                 return;
                 // TODO checar si sirve así
             }
@@ -183,33 +239,37 @@ public:
     }
     // + Lista exclusiva para médico
     template <class T>
-    list<T> fileToList(const string &targetFile,list<T> &targetList){
-        string line;
+    void fileToList(const string &targetFile,list<T> &targetList){
+        string dirtyLine, cleanLine;
         T object;
-        stringstream iss(line);
-        ifstream ifs(targetFile);
+        ifstream ifs(targetFile,ios::in);
         if (!ifs.is_open())
             throw ios::failure("Archivo no encontrado");
-        while(getline(ifs, line, '#')){
-            if(line[0] == 0)
+        while(getline(ifs, dirtyLine, '#')){
+            if(dirtyLine.empty())
                 continue;
-            line.erase(0,2);
+            if(dirtyLine[0] == 0)
+                continue;
+            cleanLine = dirtyLine.substr(2);
+            stringstream iss(cleanLine);
             iss >> object;
             targetList.push_back(object);
+            iss.clear();
         }
+        ifs.close();
     }
-    template <class T>
-    fstream& listTofile(list<T> &myList, fstream &myFStream){  // + Lista y archivo
-        for(auto iterator = myList.begin();iterator != myList.end();iterator++)
-            myFStream << "1*" << *iterator << '#';
-        return myFStream;
+    template <typename T>
+    void listTofile(list<T> &myList, fstream &myFStream){// + Lista y archivo
+        for(auto &iterator : myList)
+            myFStream << "1*" << iterator << '#';
+        // Se asegura de que se estriba en el disco
+        myFStream.flush();
     }
     void clear(){
         dataFileStream.open(dataFileDir,ios::out | ios::trunc);
         dataFileStream.close();
     }
     void compress(){
-
         list<Medico> myList;
         fileToList(dataFileDir,myList);
         listTofile(myList,dataFileStream);
