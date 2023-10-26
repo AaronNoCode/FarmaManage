@@ -2,7 +2,7 @@
 /testing.exe
 /TOP.txt
 /CMakeLists.txt
-/.idea
+.idea/
 cmake-build-debug
 *.exe
 *.txt
