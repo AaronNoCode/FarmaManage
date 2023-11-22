@@ -11,24 +11,26 @@
 #include "patientUI.h"
 #include "backupUI.h"
 #include "diagnosisUI.h"
+#include "../headers/color.hpp"
+
 
 using std::string,std::cout,std::cin,std::endl,std::getline;
 class MainUI{
 public:
     void mainMenu(){
         system("cls");
-        cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<'\n';
-        cout<<"|               FarmaManage                 |"<<'\n';
-        cout<<"|              Menu principal               |"<<'\n';
-        cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<'\n';
-        cout<<"|               1.-Medicos                  |"<<'\n';
-        cout<<"|               2.-Pacientes                |"<<'\n';
-        cout<<"|               3.-Diagnosticos             |"<<'\n';
-        cout<<"|               4.-Medicamentos             |"<<'\n';
-        cout<<"|               5.-Consultas                |"<<'\n';
-        cout<<"|               6.-Respaldos                |"<<'\n';
-        cout<<"|               0.-Salir                    |"<<'\n';
-        cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<'\n';
+        cout<<dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++")<<'\n';
+        cout<<dye::light_yellow("|               ")<<dye::light_blue("FarmaManage")<<dye::light_yellow("                 |")<<'\n';
+        cout<<dye::light_yellow("|              ")<<dye::light_blue("Menu Principal")<<dye::light_yellow("               |")<<'\n';
+        cout<<dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++")<<'\n';
+        cout<<dye::light_yellow("|               1.-Medicos                  |")<<'\n';
+        cout<<dye::light_yellow("|               2.-Pacientes                |")<<'\n';
+        cout<<dye::light_yellow("|               3.-Diagnosticos             |")<<'\n';
+        cout<<dye::light_yellow("|               4.-Medicamentos             |")<<'\n';
+        cout<<dye::light_yellow("|               5.-Consultas                |")<<'\n';
+        cout<<dye::light_yellow("|               6.-Respaldos                |")<<'\n';
+        cout<<dye::light_yellow("|               0.-Salir                    |")<<'\n';
+        cout<<dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++")<<'\n';
     }
     void run(){
         MedicUI medicUi;
@@ -41,22 +43,24 @@ public:
         int opcionInt = -1;
         mainMenu();
         do{
-            cout<<"Ingrese opcion >> ";
+            cout<<dye::light_green("\n$ ");
             getline(cin,opcion,'\n');
             if(opcion.empty()) {
-                cout << "Opcion invalida, intente de nuevo" << '\n';
+                cout << dye::red("             Opcion invalida, intente de nuevo") << '\n';
                 continue;
             }
             if(entradaValida(opcion)) {
                 opcionInt = stoi(opcion);
             }
             else {
-                cout << "Opcion invalida, intente de nuevo" << '\n';
+                cout << dye::red("             Opcion invalida, intente de nuevo") << '\n';
                 continue;
             }
             switch(opcionInt){
                 case 0: // Exit
-                    cout<<".:Vuelva pronto:.";
+                    system("cls");
+                    cout<<"\n"<<dye::light_blue("              ~Vuelva pronto~")<<'\n';
+                    system("pause");
                     break;
                 case 1: // Medic
                     system("cls");
@@ -85,7 +89,7 @@ public:
                     mainMenu();
                     break;
                 default:
-                    cout<<"Opcion invalida, intente de nuevo"<<'\n';
+                    cout<<dye::red("             Opcion invalida, intente de nuevo")<<'\n';
             }
         }while(opcionInt != 0);
         system("cls");
