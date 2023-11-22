@@ -2,21 +2,22 @@
 #define FARMAMANAGE_MEDICUI_H
 #include <iostream>
 #include "../headers/medicos-file.h"
+#include "../headers/color.hpp"
 using std::string,std::cout,std::cin,std::getline;
 class MedicUI{
 public:
     void menu(){
         system("cls");
-        cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<'\n';
-        cout<<"|              FarmaManage                  |"<<'\n';
-        cout<<"|              Menu medicos                 |"<<'\n';
-        cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<'\n';
-        cout<<"|            1.-Crear nuevo                 |"<<'\n';
-        cout<<"|            2.-Buscar medico               |"<<'\n';
-        cout<<"|            3.-Editar medico               |"<<'\n';
-        cout<<"|            4.-Eliminar medico             |"<<'\n';
-        cout<<"|            0.-Menu principal              |"<<'\n';
-        cout<<"+++++++++++++++++++++++++++++++++++++++++++++"<<'\n';
+        cout << dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++") << '\n';
+        cout << dye::light_yellow("|              ")<<dye::light_blue("FarmaManage")<<dye::light_yellow("                  |") << '\n';
+        cout << dye::light_yellow("|              ")<<dye::light_blue("Menu Medicos")<<dye::light_yellow("                 |") << '\n';
+        cout << dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++") << '\n';
+        cout << dye::light_yellow("|             1.-Crear nuevo                |") << '\n';
+        cout << dye::light_yellow("|             2.-Buscar medico              |") << '\n';
+        cout << dye::light_yellow("|             3.-Editar medico              |") << '\n';
+        cout << dye::light_yellow("|             4.-Eliminar medico            |") << '\n';
+        cout << dye::light_yellow("|             0.-Menu principal             |") << '\n';
+        cout << dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++") << '\n';
     }
     bool entradaNumValida(string &str){
         return isNumeric(str);
@@ -24,20 +25,21 @@ public:
     bool confirmacion(){
         string opcion;
         int opcionInt = 0;
-        cout<<"\t\t\t¿Los datos son correctos?\n\t\t\t1.-Sí\n\t\t\t2.-No\n>> ";
+        cout << dye::light_blue("\t\t\t¿Los datos son correctos?\n\t\t\t1.-Sí\n\t\t\t2.-No")<<dye::light_green("\n$ ");
         do {
+            cout << dye::light_green("\n$ ");
             getline(cin, opcion, '\n');
             if(opcion.empty()){
-                cout << "\t\t\tOpcion invalida, intente de nuevo\n>> ";
+                cout << dye::red("             Opcion invalida, intente de nuevo");
                 continue;
             }
             if (entradaNumValida(opcion)){
-                cout << "\t\t\tNo se admiten caracteres especiales ni alfabeticos, intente de nuevo\n>> ";
+                cout << dye::red("\t\t\tNo se admiten caracteres especiales ni alfabeticos, intente de nuevo");
                 continue;
             }else{
                 opcionInt = stoi(opcion);
                 if(opcionInt > 2 || opcionInt < 1){
-                    cout << "\t\t\tOpcion invalida, intente de nuevo\n>> ";
+                    cout << dye::red("             Opcion invalida, intente de nuevo");
                 }
             }
         }while(opcionInt > 2 || opcionInt < 1);
@@ -51,37 +53,39 @@ public:
         int opcionInt = 99;
         menu();
         do{
-            cout<<"Ingrese opcion >> ";
+            cout << dye::light_green("\n$ ");
             getline(cin,opcion,'\n');
             if(opcion.empty()){
-                cout<<"Opcion invalida, intente de nuevo"<<'\n';
+                cout << dye::red("             Opcion invalida, intente de nuevo");
                 continue;
             }
             if(entradaNumValida(opcion)) {
                 opcionInt = stoi(opcion);
-            }
-            else {
-                cout<<"Opcion invalida, intente de nuevo"<<'\n';
+            }else {
+                cout << dye::red("             Opcion invalida, intente de nuevo");
                 continue;
             }
             switch(opcionInt){
                 case 0: // Vuelve a menú principal
                     break;
                 case 1: // Crear nuevo
-
                     system("cls");
+                    menu();
                     break;
                 case 2: // Buscar
                     system("cls");
+                    menu();
                     break;
                 case 3: // Editar
                     system("cls");
+                    menu();
                     break;
                 case 4: // Eliminar
                     system("cls");
+                    menu();
                     break;
                 default:
-                    cout<<"Opcion invalida, intente de nuevo"<<'\n';
+                    cout << dye::red("             Opcion invalida, intente de nuevo");
             }
         }while(opcionInt != 0);
     }

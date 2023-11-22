@@ -1,5 +1,3 @@
-// + Foolproof
-
 #ifndef FARMAMANAGE_MAINUI_H
 #define FARMAMANAGE_MAINUI_H
 #include <string>
@@ -19,18 +17,18 @@ class MainUI{
 public:
     void mainMenu(){
         system("cls");
-        cout<<dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++")<<'\n';
-        cout<<dye::light_yellow("|               ")<<dye::light_blue("FarmaManage")<<dye::light_yellow("                 |")<<'\n';
-        cout<<dye::light_yellow("|              ")<<dye::light_blue("Menu Principal")<<dye::light_yellow("               |")<<'\n';
-        cout<<dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++")<<'\n';
-        cout<<dye::light_yellow("|               1.-Medicos                  |")<<'\n';
-        cout<<dye::light_yellow("|               2.-Pacientes                |")<<'\n';
-        cout<<dye::light_yellow("|               3.-Diagnosticos             |")<<'\n';
-        cout<<dye::light_yellow("|               4.-Medicamentos             |")<<'\n';
-        cout<<dye::light_yellow("|               5.-Consultas                |")<<'\n';
-        cout<<dye::light_yellow("|               6.-Respaldos                |")<<'\n';
-        cout<<dye::light_yellow("|               0.-Salir                    |")<<'\n';
-        cout<<dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++")<<'\n';
+        cout << dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++") << '\n';
+        cout << dye::light_yellow("|               ")<<dye::light_blue("FarmaManage")<<dye::light_yellow("                 |") << '\n';
+        cout << dye::light_yellow("|              ")<<dye::light_blue("Menu Principal")<<dye::light_yellow("               |") << '\n';
+        cout << dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++") << '\n';
+        cout << dye::light_yellow("|               1.-Medicos                  |") << '\n';
+        cout << dye::light_yellow("|               2.-Pacientes                |") << '\n';
+        cout << dye::light_yellow("|               3.-Diagnosticos             |") << '\n';
+        cout << dye::light_yellow("|               4.-Medicamentos             |") << '\n';
+        cout << dye::light_yellow("|               5.-Consultas                |") << '\n';
+        cout << dye::light_yellow("|               6.-Respaldos                |") << '\n';
+        cout << dye::light_yellow("|               0.-Salir                    |") << '\n';
+        cout << dye::light_yellow("+++++++++++++++++++++++++++++++++++++++++++++") << '\n';
     }
     void run(){
         MedicUI medicUi;
@@ -43,23 +41,23 @@ public:
         int opcionInt = -1;
         mainMenu();
         do{
-            cout<<dye::light_green("\n$ ");
+            cout << dye::light_green("\n$ ");
             getline(cin,opcion,'\n');
             if(opcion.empty()) {
-                cout << dye::red("             Opcion invalida, intente de nuevo") << '\n';
+                cout << dye::red("             Opcion invalida, intente de nuevo");
                 continue;
             }
             if(entradaValida(opcion)) {
                 opcionInt = stoi(opcion);
             }
             else {
-                cout << dye::red("             Opcion invalida, intente de nuevo") << '\n';
+                cout << dye::red("             Opcion invalida, intente de nuevo");
                 continue;
             }
             switch(opcionInt){
                 case 0: // Exit
                     system("cls");
-                    cout<<"\n"<<dye::light_blue("              ~Vuelva pronto~")<<'\n';
+                    cout << "\n"<<dye::light_blue("              ~Vuelva pronto~") << '\n';
                     system("pause");
                     break;
                 case 1: // Medic
@@ -89,7 +87,7 @@ public:
                     mainMenu();
                     break;
                 default:
-                    cout<<dye::red("             Opcion invalida, intente de nuevo")<<'\n';
+                    cout << dye::red("             Opcion invalida, intente de nuevo");
             }
         }while(opcionInt != 0);
         system("cls");
